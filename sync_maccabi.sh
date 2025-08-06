@@ -179,8 +179,8 @@ setup_cron() {
             DESCRIPTION="every hour"
             ;;
         "daily")
-            CRON_JOB="0 9 * * * $SCRIPT_DIR/sync_maccabi.sh cron >> $LOG_FILE 2>&1"
-            DESCRIPTION="daily at 9:00 AM"
+            CRON_JOB="0 11 * * * $SCRIPT_DIR/sync_maccabi.sh cron >> $LOG_FILE 2>&1"
+            DESCRIPTION="daily at 11:00 AM"
             ;;
         "twice-daily")
             CRON_JOB="0 9,21 * * * $SCRIPT_DIR/sync_maccabi.sh cron >> $LOG_FILE 2>&1"

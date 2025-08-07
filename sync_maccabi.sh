@@ -175,19 +175,19 @@ setup_cron() {
     
     case "$frequency" in
         "hourly")
-            CRON_JOB="0 * * * * $SCRIPT_DIR/sync_maccabi.sh cron >> $LOG_FILE 2>&1"
+            CRON_JOB="0 * * * * cd $SCRIPT_DIR && ./sync_maccabi.sh cron >> sync.log 2>&1"
             DESCRIPTION="every hour"
             ;;
         "daily")
-            CRON_JOB="0 11 * * * $SCRIPT_DIR/sync_maccabi.sh cron >> $LOG_FILE 2>&1"
-            DESCRIPTION="daily at 11:00 AM"
+            CRON_JOB="0 12 * * * cd $SCRIPT_DIR && ./sync_maccabi.sh cron >> sync.log 2>&1"
+            DESCRIPTION="daily at 12:00 PM"
             ;;
         "twice-daily")
-            CRON_JOB="0 9,21 * * * $SCRIPT_DIR/sync_maccabi.sh cron >> $LOG_FILE 2>&1"
+            CRON_JOB="0 9,21 * * * cd $SCRIPT_DIR && ./sync_maccabi.sh cron >> sync.log 2>&1"
             DESCRIPTION="twice daily (9:00 AM and 9:00 PM)"
             ;;
         "weekly")
-            CRON_JOB="0 9 * * 1 $SCRIPT_DIR/sync_maccabi.sh cron >> $LOG_FILE 2>&1"
+            CRON_JOB="0 9 * * 1 cd $SCRIPT_DIR && ./sync_maccabi.sh cron >> sync.log 2>&1"
             DESCRIPTION="weekly on Mondays at 9:00 AM"
             ;;
         *)
@@ -219,6 +219,7 @@ setup_cron() {
     # Add new cron job
     (crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
     log_success "Cron job added - will sync $DESCRIPTION"
+    log_success $(crontab -l)
     log_info "To remove: crontab -e and delete the line with sync_maccabi.sh"
     log_info "To view: crontab -l"
 }

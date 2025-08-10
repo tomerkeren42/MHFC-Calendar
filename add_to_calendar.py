@@ -308,7 +308,9 @@ class GoogleCalendarManager:
                     continue  # Skip matches without "not final time" indicator
                 
                 # Look for matching event
-                match_title_base = f"{match['home_team']} vs {match['away_team']}"
+                # match_title_base = f"{match['home_team']} vs {match['away_team']}"
+                match_title_base = f"{match['away_team']} vs {match['home_team']}" # Writing it this way because
+                #  team names are in hebrew, so using the english "vs" term is making the whole title in the wrong order
                 
                 for event in existing_events:
                     event_title = event.get('summary', '')

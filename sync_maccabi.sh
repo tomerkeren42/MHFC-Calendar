@@ -8,6 +8,7 @@ set -e  # Exit on any error
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PYTHON_SCRIPT="$SCRIPT_DIR/auto_sync.py"
+PYTHON=/Users/tkeren/miniconda3/envs/mhfc/bin/python
 LOG_FILE="$SCRIPT_DIR/sync.log"
 PID_FILE="$SCRIPT_DIR/sync.pid"
 
@@ -77,13 +78,13 @@ check_prerequisites() {
     fi
     
     # Check if Python 3 is available
-    if ! command -v python3 &> /dev/null; then
+    if ! command -v $PYTHON &> /dev/null; then
         log_error "Python 3 is not installed or not in PATH"
         exit 1
     fi
     
     # Check if required Python packages are installed
-    if ! python3 -c "import requests, bs4, google.auth" &> /dev/null; then
+    if ! ${PYTHON} -c "import requests, bs4, google.auth" &> /dev/null; then
         log_warning "Some required Python packages may be missing"
         log_info "Installing required packages..."
         pip3 install requests beautifulsoup4 google-auth google-auth-oauthlib google-api-python-client pytz
@@ -105,7 +106,7 @@ run_sync() {
     cd "$SCRIPT_DIR"
     
     # Run Python script
-    if python3 "$PYTHON_SCRIPT"; then
+    if {PYTHON} "$PYTHON_SCRIPT"; then
         log_success "Sync completed successfully"
         return 0
     else
@@ -148,7 +149,7 @@ show_status() {
     
     if [ -f "$SCRIPT_DIR/sync_state.json" ]; then
         echo "Last sync information:"
-        python3 -c "
+        {PYTHON} -c "
 import json
 try:
     with open('$SCRIPT_DIR/sync_state.json', 'r') as f:
@@ -263,7 +264,7 @@ main() {
             NC=""
             check_running
             cd "$SCRIPT_DIR"
-            python3 "$PYTHON_SCRIPT" 2>&1
+            ${PYTHON} "$PYTHON_SCRIPT" 2>&1
             ;;
         "daemon")
             check_running

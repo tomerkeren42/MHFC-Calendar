@@ -36,8 +36,20 @@ class GoogleCalendarManager:
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
+                try:
+                    print("Token expired, attempting to refresh...")
+                    creds.refresh(Request())
+                    print("Token refreshed successfully")
+                except Exception as refresh_error:
+                    print(f"Token refresh failed: {refresh_error}")
+                    print("Refresh token may be expired or revoked. Re-authenticating...")
+                    # Delete the invalid token file and re-authenticate
+                    if os.path.exists(self.token_file):
+                        os.remove(self.token_file)
+                    creds = None
+            
+            # If refresh failed or no refresh token, do full authentication flow
+            if not creds or not creds.valid:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     self.credentials_file, SCOPES)
                 creds = flow.run_local_server(port=0)
@@ -146,7 +158,9 @@ class GoogleCalendarManager:
             
             # Build event title
             if 'home_team' in event_data and 'away_team' in event_data:
-                title = f"{event_data['home_team']} vs {event_data['away_team']}"
+                # title = f"{event_data['home_team']} vs {event_data['away_team']}"
+                # because team names are in hebrew, so using the english "vs" term is making the whole title in the wrong order
+                title = f"{event_data['away_team']} vs {event_data['home_team']}"
                 if 'competition' in event_data:
                     title += f" - {event_data['competition']}"
             
